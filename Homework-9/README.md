@@ -64,7 +64,7 @@ ENS is a first-class citizen
 ### Setup
 
 ```
-npm innit -y
+npm init -y
 npm install --save-dev hardhat
 npx hardhat
 npm install --save ethers
