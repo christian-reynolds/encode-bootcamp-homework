@@ -1,0 +1,58 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <title>World's Best NFT</title>
+
+    <style>
+        .overlay{
+            display: none;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            background:rgba(255,255,255,0.8) url("./loader.gif") center no-repeat;
+        }
+        /* Turn off scrollbar when body element has the loading class */
+        body.loading{
+            overflow: hidden;   
+        }
+        /* Make spinner image visible when body element has the loading class */
+        body.loading .overlay{
+            display: block;
+        }
+    </style>
+
+    <!-- External libraries -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- Local functions -->
+    <script src='./javascript/web3Bridge.js'></script>
+    <script src='./javascript/ajax.js'></script>
+    <script src='./javascript/wallet.js'></script>
+</head>
+
+<body>
+    <h1>The World's Best NFT</h1>
+    <button id="mint-nft" type="button" style="display: none;">Mint NFT</button>
+    <p id="success" style="display: none;">You minted the World's Best NFT!</p>
+    <p id="account-metadata" style="display: none;"></p>
+
+    <span id="transferSpan" style="display: none;">
+        <p>-------------------------</p>
+        <p>Token ID</p>
+        <input id="transfer-tokenid" name="transfer-tokenid" type="text" maxlength="5">
+        <p>Address</p>
+        <input id="transfer-address" name="transfer-address" type="text">
+        <br>
+        <button id="transfer-nft" type="button">Transfer NFT</button>
+    </span>
+
+    <div class="overlay"></div>
+</body>
+
+</html>
