@@ -10,28 +10,27 @@ $(document).ready(() => {
         console.log('Account changed!');
     });
 
-    $('#mint-nft').click(() => {
+    $('#mint-nft').click(async () => {
         $("body").addClass("loading");
 
-        mintNft().then((response) => {
-            showNftMetadata();
+        const response = await mintNft();
 
-            $('#success').show();
-            $("body").removeClass("loading");
-        });
+        showNftMetadata();
+
+        $('#success').show();
+        $("body").removeClass("loading");
     });
 
-    $('#transfer-nft').click(() => {
+    $('#transfer-nft').click(async () => {
         $("body").addClass("loading");
         const tokenId = document.getElementById('transfer-tokenid');
         const address = document.getElementById('transfer-address');
 
-        transferNft(address.value, tokenId.value).then((response => {
-            showNftMetadata();
-            $("body").removeClass("loading");
-            address.value = "";
-            tokenId.value = "";
-        }));
+        const response = await transferNft(address.value, tokenId.value);
+        showNftMetadata();
+        $("body").removeClass("loading");
+        address.value = "";
+        tokenId.value = "";
     });
 });
 
