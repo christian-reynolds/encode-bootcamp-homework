@@ -6,10 +6,16 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
 
     uint256 constant initialSupply = 10000;
+    enum PaymentType { UNKNOWN, BASIC, REFUND, DIVIDEND, GROUP }
+    PaymentType constant defaultPaymentType = PaymentType.UNKNOWN;
     
     struct Payment {
+        uint256 paymentId;
         uint256 amount;
         address to;
+        PaymentType paymentType;
+        string comment;
+        uint256 timestamp;
     }
     
     mapping(address => Payment[]) public payments;
@@ -36,7 +42,8 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
     }
     
     function recordPayment(address _sender, address _recipient, uint256 _amount) internal {
-        payments[_sender].push(Payment(_amount, _recipient));
+        //TODO: replace the hardcoded paymentId of 1
+        payments[_sender].push(Payment(1, _amount, _recipient, defaultPaymentType, "", block.timestamp));
     }
     
 }
