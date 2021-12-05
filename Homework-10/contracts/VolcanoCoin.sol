@@ -59,25 +59,36 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
 
     function updatePaymentDetails(uint256 _paymentId, uint8 _paymentType, string memory _comment) public {
         require(_paymentType <= paymentTypeEnumCount, "VolcanoCoin: PaymentType is not a valid value");
+        
         Payment[] storage addressPayments = payments[msg.sender];
         require(addressPayments.length > 0, "VolcanoCoin: No payments found for this address");
-        bool paymentFound = false;
+        
+        (Payment memory payment, uint i) = findPayment(msg.sender, _paymentId);
+        require(payment.paymentId != 0, "VolcanoCoin: Payment not found");
 
-        for (uint i=0; i< addressPayments.length; i++) {
-             Payment memory payment = addressPayments[i];
-
-             if (_paymentId == payment.paymentId) {
-                paymentFound = true;
-                payment.paymentType = PaymentType(_paymentType);
-                payment.comment = _comment;
-                addressPayments[i] = payment;
-                 break;
-             }
-        }
-
-        require(paymentFound, "VolcanoCoin: Payment not found");
+        payment.paymentType = PaymentType(_paymentType);
+        payment.comment = _comment;
+        addressPayments[i] = payment;
 
         payments[msg.sender] = addressPayments;
+    }
+
+    function findPayment(address _payer, uint256 _paymentId) private view returns (Payment memory, uint) {
+        Payment[] memory addressPayments = payments[_payer];
+        Payment memory returnPayment;
+        uint index;
+
+        for (uint i=0; i< addressPayments.length; i++) {
+            Payment memory payment = addressPayments[i];
+
+            if (_paymentId == payment.paymentId) {
+                index = i;
+                returnPayment = payment;
+                break;
+            }
+        }
+
+        return (returnPayment, index);
     }
     
 }
