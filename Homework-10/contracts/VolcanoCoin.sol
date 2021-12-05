@@ -2,10 +2,13 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
 
     uint256 constant initialSupply = 10000;
+    using Counters for Counters.Counter;
+    Counters.Counter private _paymentIds;
     enum PaymentType { UNKNOWN, BASIC, REFUND, DIVIDEND, GROUP }
     PaymentType constant defaultPaymentType = PaymentType.UNKNOWN;
     
@@ -36,6 +39,8 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
     }
     
     function transfer(address _recipient, uint256 _amount) public virtual override returns (bool) {
+        _paymentIds.increment();
+        
         _transfer(msg.sender, _recipient, _amount);
         recordPayment(msg.sender, _recipient, _amount);
         return true;
@@ -43,7 +48,7 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
     
     function recordPayment(address _sender, address _recipient, uint256 _amount) internal {
         //TODO: replace the hardcoded paymentId of 1
-        payments[_sender].push(Payment(1, _amount, _recipient, defaultPaymentType, "", block.timestamp));
+        payments[_sender].push(Payment(_paymentIds.current(), _amount, _recipient, defaultPaymentType, "", block.timestamp));
     }
     
 }
