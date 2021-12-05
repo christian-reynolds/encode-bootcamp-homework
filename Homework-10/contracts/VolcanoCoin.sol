@@ -40,6 +40,10 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
     function getPayments(address _addr) public view returns (Payment[] memory) {
         return payments[_addr];
     }
+
+    function viewPayments() public view returns (Payment[] memory) {
+        return payments[msg.sender];
+    }
     
     function transfer(address _recipient, uint256 _amount) public virtual override returns (bool) {
         _paymentIds.increment();
