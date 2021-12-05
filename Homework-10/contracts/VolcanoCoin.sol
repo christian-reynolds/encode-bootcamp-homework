@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
-
     uint256 constant initialSupply = 10000;
     using Counters for Counters.Counter;
     Counters.Counter private _paymentIds;
@@ -71,6 +70,23 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
         addressPayments[i] = payment;
 
         payments[msg.sender] = addressPayments;
+    }
+
+    function updatePaymentDetailsAdmin(address _payer, uint256 _paymentId, uint8 _paymentType) public {
+        require(msg.sender == administrator, "VolcanoCoin: You are not the administrator");
+        require(_paymentType <= paymentTypeEnumCount, "VolcanoCoin: PaymentType is not a valid value");
+        
+        Payment[] storage addressPayments = payments[_payer];
+        require(addressPayments.length > 0, "VolcanoCoin: No payments found for this address");
+        
+        (Payment memory payment, uint i) = findPayment(_payer, _paymentId);
+        require(payment.paymentId != 0, "VolcanoCoin: Payment not found");
+
+        payment.paymentType = PaymentType(_paymentType);
+        payment.comment = string(abi.encodePacked("updated by ", administrator));
+        addressPayments[i] = payment;
+
+        payments[_payer] = addressPayments;
     }
 
     function findPayment(address _payer, uint256 _paymentId) private view returns (Payment memory, uint) {
