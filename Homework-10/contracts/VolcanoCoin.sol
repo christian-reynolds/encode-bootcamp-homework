@@ -23,11 +23,13 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
     }
     
     mapping(address => Payment[]) public payments;
+    address administrator;
     
     event TotalSupplyIncreased(uint256);
     
     constructor() {
         _mint(msg.sender, initialSupply);
+        administrator = msg.sender;
     }
     
     function addToTotalSupply(uint256 _quantity) public onlyOwner {
