@@ -9,7 +9,7 @@ describe("VolcanoCoin", () => {
         volcanoContract = await Volcano.deploy();
         await volcanoContract.deployed();
 
-        // [owner, addr1, addr2, addr3] = await ethers.getSigners();
+        [owner, addr1, addr2, addr3] = await ethers.getSigners();
     });
 
     it("should return it's symbol", async () => {
@@ -18,5 +18,20 @@ describe("VolcanoCoin", () => {
 
     it("should return it's name", async () => {
         expect(await volcanoContract.name()).to.equal("Volcano Coin");
+    });
+
+    it("updates balances on successful transfer from owner to addr1", async () => {
+        let transferAmt = 100;
+        let ownerInitialBalance = await volcanoContract.balanceOf(owner.address);
+        let addr1InitialBalance = await volcanoContract.balanceOf(addr1.address);
+
+        let tx = await volcanoContract.transfer(addr1.address, transferAmt);
+        await tx.wait();
+
+        let ownerBalance = await volcanoContract.balanceOf(owner.address);
+        let addr1Balance = await volcanoContract.balanceOf(addr1.address);
+
+        expect(ownerInitialBalance - ownerBalance).to.equal(transferAmt);
+        expect(addr1Balance - addr1InitialBalance).to.equal(transferAmt);
     });
 });
