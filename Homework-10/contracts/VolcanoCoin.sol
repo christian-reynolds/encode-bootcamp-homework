@@ -57,14 +57,8 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
     }
 
     function updatePaymentDetails(uint256 _paymentId, uint8 _paymentType, string memory _comment) public {
-        require(_paymentType <= paymentTypeEnumCount, "VolcanoCoin: PaymentType is not a valid value");
+        (Payment[] storage addressPayments, Payment memory payment, uint i) = findPayment(msg.sender, _paymentId, _paymentType);
         
-        Payment[] storage addressPayments = payments[msg.sender];
-        require(addressPayments.length > 0, "VolcanoCoin: No payments found for this address");
-        
-        (Payment memory payment, uint i) = findPayment(msg.sender, _paymentId);
-        require(payment.paymentId != 0, "VolcanoCoin: Payment not found");
-
         payment.paymentType = PaymentType(_paymentType);
         payment.comment = bytes(payment.comment).length == 0 ? _comment : string(abi.encodePacked(payment.comment, "; ", _comment));
         addressPayments[i] = payment;
@@ -73,14 +67,8 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
     }
 
     function updatePaymentDetailsAdmin(address _payer, uint256 _paymentId, uint8 _paymentType) public {
-        require(msg.sender == administrator, "VolcanoCoin: You are not the administrator");
-        require(_paymentType <= paymentTypeEnumCount, "VolcanoCoin: PaymentType is not a valid value");
-        
-        Payment[] storage addressPayments = payments[_payer];
-        require(addressPayments.length > 0, "VolcanoCoin: No payments found for this address");
-        
-        (Payment memory payment, uint i) = findPayment(_payer, _paymentId);
-        require(payment.paymentId != 0, "VolcanoCoin: Payment not found");
+        require(msg.sender == administrator, "VolcanoCoin: You are not the administrator");        
+        (Payment[] storage addressPayments, Payment memory payment, uint i) = findPayment(_payer, _paymentId, _paymentType);        
 
         payment.paymentType = PaymentType(_paymentType);
         payment.comment = bytes(payment.comment).length == 0 ? string(abi.encodePacked("updated by ", administrator)) : string(abi.encodePacked(payment.comment, "; updated by ", administrator));
@@ -89,8 +77,12 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
         payments[_payer] = addressPayments;
     }
 
-    function findPayment(address _payer, uint256 _paymentId) private view returns (Payment memory, uint) {
-        Payment[] memory addressPayments = payments[_payer];
+    function findPayment(address _payer, uint256 _paymentId, uint8 _paymentType) private view returns (Payment[] storage, Payment memory, uint) {
+        require(_paymentType <= paymentTypeEnumCount, "VolcanoCoin: PaymentType is not a valid value");
+        
+        Payment[] storage addressPayments = payments[_payer];
+        require(addressPayments.length > 0, "VolcanoCoin: No payments found for this address");
+
         Payment memory returnPayment;
         uint index;
 
@@ -104,7 +96,9 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
             }
         }
 
-        return (returnPayment, index);
+        require(returnPayment.paymentId != 0, "VolcanoCoin: Payment not found");
+
+        return (addressPayments, returnPayment, index);
     }
     
 }
