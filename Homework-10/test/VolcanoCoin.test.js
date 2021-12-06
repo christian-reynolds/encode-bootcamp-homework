@@ -34,4 +34,17 @@ describe("VolcanoCoin", () => {
         expect(ownerInitialBalance - ownerBalance).to.equal(transferAmt);
         expect(addr1Balance - addr1InitialBalance).to.equal(transferAmt);
     });
+
+    it("payment id of owner's first transfer should be 1", async () => {
+        let transferAmt = 100;
+
+        // Make a transfer from the owner account
+        let tx = await volcanoContract.transfer(addr1.address, transferAmt);
+        await tx.wait();
+
+        // View the payments for the owner account
+        let paymentsTx = await volcanoContract.viewPayments();
+
+        expect(paymentsTx[0][0].toNumber()).to.equal(1);
+    });
 });
