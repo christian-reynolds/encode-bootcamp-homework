@@ -1,5 +1,8 @@
-const { expect } = require("chai");
+const { expect, use } = require("chai");
 const { ethers } = require("hardhat");
+
+const { solidity } = require("ethereum-waffle");
+use(solidity);
 
 describe("VolcanoCoin", () => {
     let volcanoContract;
@@ -33,17 +36,20 @@ describe("VolcanoCoin", () => {
 
     it("updates balances on successful transfer from owner to addr1", async () => {
         let transferAmt = 100;
-        let ownerInitialBalance = await volcanoContract.balanceOf(owner.address);
-        let addr1InitialBalance = await volcanoContract.balanceOf(addr1.address);
+        // let ownerInitialBalance = await volcanoContract.balanceOf(owner.address);
+        // let addr1InitialBalance = await volcanoContract.balanceOf(addr1.address);
 
-        let tx = await volcanoContract.transfer(addr1.address, transferAmt);
-        await tx.wait();
+        // let tx = await volcanoContract.transfer(addr1.address, transferAmt);
+        // await tx.wait();
 
-        let ownerBalance = await volcanoContract.balanceOf(owner.address);
-        let addr1Balance = await volcanoContract.balanceOf(addr1.address);
+        // let ownerBalance = await volcanoContract.balanceOf(owner.address);
+        // let addr1Balance = await volcanoContract.balanceOf(addr1.address);
 
-        expect(ownerInitialBalance - ownerBalance).to.equal(transferAmt);
-        expect(addr1Balance - addr1InitialBalance).to.equal(transferAmt);
+        // expect(ownerInitialBalance - ownerBalance).to.equal(transferAmt);
+        // expect(addr1Balance - addr1InitialBalance).to.equal(transferAmt);
+
+        await expect(() => volcanoContract.transfer(addr1.address, transferAmt))
+            .to.changeTokenBalances(volcanoContract, [owner, addr1], [-transferAmt, transferAmt]);
     });
 
     it("payment id of owner's first transfer should be 1", async () => {
