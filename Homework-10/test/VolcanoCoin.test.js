@@ -20,6 +20,10 @@ describe("VolcanoCoin", () => {
         expect(await volcanoContract.name()).to.equal("Volcano Coin");
     });
 
+    it("should return initial total supply of 10000", async () => {
+        expect(await volcanoContract.totalSupply()).to.equal(10000);
+    });
+
     it("updates balances on successful transfer from owner to addr1", async () => {
         let transferAmt = 100;
         let ownerInitialBalance = await volcanoContract.balanceOf(owner.address);
