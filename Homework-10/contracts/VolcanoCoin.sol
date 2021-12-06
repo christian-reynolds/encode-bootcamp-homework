@@ -66,7 +66,7 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
         require(payment.paymentId != 0, "VolcanoCoin: Payment not found");
 
         payment.paymentType = PaymentType(_paymentType);
-        payment.comment = _comment;
+        payment.comment = bytes(payment.comment).length == 0 ? _comment : string(abi.encodePacked(payment.comment, "; ", _comment));
         addressPayments[i] = payment;
 
         payments[msg.sender] = addressPayments;
@@ -83,7 +83,7 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
         require(payment.paymentId != 0, "VolcanoCoin: Payment not found");
 
         payment.paymentType = PaymentType(_paymentType);
-        payment.comment = string(abi.encodePacked("updated by ", administrator));
+        payment.comment = bytes(payment.comment).length == 0 ? string(abi.encodePacked("updated by ", administrator)) : string(abi.encodePacked(payment.comment, "; updated by ", administrator));
         addressPayments[i] = payment;
 
         payments[_payer] = addressPayments;
