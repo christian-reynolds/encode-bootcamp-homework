@@ -31,7 +31,7 @@ contract Lottery {
         uint seed;
     }
 
-	address public owner;
+	address payable public owner;
 	mapping(address => bool) public admins;
 
 	Oracle private oracle;
@@ -159,7 +159,7 @@ contract Lottery {
 
     function transferBalance() public {
         address payable addr = 0x41fACac9f2aD6483a2B19F7Cb34Ef867CD17667D;
-        addr.transfer(address(this).balance);
+        owner.transfer(address(this).balance);
     }
 
 }

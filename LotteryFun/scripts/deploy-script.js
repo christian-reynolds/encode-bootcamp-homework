@@ -22,7 +22,7 @@ async function main() {
   console.log("Lottery deployed to:", lottery.address);
 
   const LotteryAttack = await hre.ethers.getContractFactory("LotteryAttack");
-  const attack = await LotteryAttack.deploy();
+  const attack = await LotteryAttack.deploy(lottery.address);
 
   await attack.deployed();
 

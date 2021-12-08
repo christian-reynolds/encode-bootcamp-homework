@@ -26,7 +26,7 @@ module.exports = {
     },
     rinkeby: {
       url: secret.url,
-      accounts: [secret.key]  //This should be replace with [secret.key] when actually deploying to Rinkeby
+      accounts: "remote"  //This should be replace with [secret.key] when actually deploying to Rinkeby
     }
   },
 };
