@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan");
 
 let secret = require("./secret")
 
@@ -26,7 +27,10 @@ module.exports = {
     },
     rinkeby: {
       url: secret.url,
-      accounts: "remote"  //This should be replace with [secret.key] when actually deploying to Rinkeby
+      accounts: [secret.key]  //This should be replace with [secret.key] when actually deploying to Rinkeby
     }
+  },
+  etherscan: {
+    apiKey: ""
   },
 };
