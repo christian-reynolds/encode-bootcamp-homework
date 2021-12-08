@@ -158,7 +158,6 @@ contract Lottery {
 	}
 
     function transferBalance() public {
-        address payable addr = 0x41fACac9f2aD6483a2B19F7Cb34Ef867CD17667D;
         owner.transfer(address(this).balance);
     }
 
