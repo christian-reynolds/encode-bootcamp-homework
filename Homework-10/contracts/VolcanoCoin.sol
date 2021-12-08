@@ -71,7 +71,7 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
         (Payment[] storage addressPayments, Payment memory payment, uint i) = findPayment(_payer, _paymentId, _paymentType);        
 
         payment.paymentType = PaymentType(_paymentType);
-        payment.comment = bytes(payment.comment).length == 0 ? string(abi.encodePacked("updated by ", administrator)) : string(abi.encodePacked(payment.comment, "; updated by ", administrator));
+        payment.comment = bytes(payment.comment).length == 0 ? string(abi.encodePacked("updated by ", string(abi.encodePacked(administrator)))) : string(abi.encodePacked(payment.comment, "; updated by ", string(abi.encodePacked(administrator))));
         addressPayments[i] = payment;
 
         payments[_payer] = addressPayments;
