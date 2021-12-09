@@ -18,4 +18,13 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 module.exports = {
   solidity: "0.6.0",
+  defaultNetwork: "hardhat",
+  networks: {
+    hardhat: {
+    },
+    rinkeby: {
+      url: secret.url,
+      accounts: [secret.key]  //This should be replace with [secret.key] when actually deploying to Rinkeby
+    }
+  },
 };
