@@ -14,7 +14,7 @@ contract LotteryAttack {
         lotteryContract.makeAGuess(addr, num % 7);
     }
 
-    function attack() external payable {
+    function attack() external {
         lotteryContract.payoutWinningTeam();
     }
 
