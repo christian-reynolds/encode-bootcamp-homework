@@ -90,7 +90,7 @@ describe("Attack", function () {
 
   });
 
-  it("Attaches gets data from storage at an external contract", async function () {
+  it("Gets data from storage at an external contract", async function () {
     for (let x = 0; x < 50; x++) {
       const test = await ethers.provider.getStorageAt("0x90649B117656e54aB4F2592c1E83e7145Eae1290", x);
       console.log("This is my test: ", test);
