@@ -51,7 +51,7 @@ describe("Attack", function () {
     let teamCount = await lotteryContract.getTeamCount();
     console.log("Team count: ", teamCount.toString());
     
-    // Guess the correct answer
+    // Guess the correct answer using the attack contracts address
     const guess = await attackContract.guess(attackContract.address);
     await guess.wait();
 
