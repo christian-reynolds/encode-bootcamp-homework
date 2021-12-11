@@ -1,9 +1,12 @@
 // SPDX-License-Identifier:UNLICENSED
 pragma solidity ^0.8.0;
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
+// contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
+contract VolcanoCoin is ERC20Upgradeable, OwnableUpgradeable {
 
     uint256 constant versionNumber = 1;
     uint256 constant initialSupply = 10000;
@@ -17,7 +20,12 @@ contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
     
     event TotalSupplyIncreased(uint256);
     
-    constructor() {
+    // constructor() {
+    //     _mint(msg.sender, initialSupply);
+    // }
+
+    function initialize() initializer public {
+        __ERC20_init("Volcano Coin", "VLC");
         _mint(msg.sender, initialSupply);
     }
     
