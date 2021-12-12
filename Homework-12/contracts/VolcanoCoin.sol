@@ -10,7 +10,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 // contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
 contract VolcanoCoin is Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable {
 
-    uint256 constant public versionNumber = 2;
+    uint256 constant public versionNumber = 1;
     uint256 constant initialSupply = 10000;
     
     struct Payment {
