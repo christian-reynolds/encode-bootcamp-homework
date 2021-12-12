@@ -2,13 +2,15 @@
 pragma solidity ^0.8.0;
 // import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 // import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 // contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable {
-contract VolcanoCoin is ERC20Upgradeable, OwnableUpgradeable {
+contract VolcanoCoin is Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable {
 
-    uint256 constant public versionNumber = 1;
+    uint256 constant public versionNumber = 2;
     uint256 constant initialSupply = 10000;
     
     struct Payment {
@@ -26,8 +28,15 @@ contract VolcanoCoin is ERC20Upgradeable, OwnableUpgradeable {
 
     function initialize() initializer public {
         __ERC20_init("Volcano Coin", "VLC");
+        __Ownable_init();
+        __UUPSUpgradeable_init();
         _mint(msg.sender, initialSupply);
     }
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() initializer {}
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
     
     function addToTotalSupply(uint256 _quantity) public onlyOwner {
         _mint(msg.sender, _quantity);

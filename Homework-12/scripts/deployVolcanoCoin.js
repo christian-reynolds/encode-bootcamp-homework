@@ -15,7 +15,8 @@ async function main() {
 
     // We get the contract to deploy
     const VolcanoCoin = await hre.ethers.getContractFactory("VolcanoCoin");
-    const volcanoCoin = await VolcanoCoin.deploy();
+    //const volcanoCoin = await VolcanoCoin.deploy();
+    const volcanoCoin = await hre.upgrades.deployProxy(VolcanoCoin, { kind: 'uups' });
 
     await volcanoCoin.deployed();
   

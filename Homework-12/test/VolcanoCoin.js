@@ -7,7 +7,7 @@ describe("VolcanoCoin", () => {
 
     beforeEach(async function () {
         VolcanoCoin = await ethers.getContractFactory("VolcanoCoin");
-        volcanoCoin = await upgrades.deployProxy(VolcanoCoin);
+        volcanoCoin = await upgrades.deployProxy(VolcanoCoin, { kind: 'uups' });
         await volcanoCoin.deployed();
 
         console.log("VolcanoCoin deployed to: ", volcanoCoin.address);
