@@ -1,6 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require('solidity-coverage');
 require('@openzeppelin/hardhat-upgrades');
+require("@nomiclabs/hardhat-etherscan");
 
 let secret = require("./secret")
 
