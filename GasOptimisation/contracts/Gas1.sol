@@ -72,54 +72,46 @@ contract GasContract is AccessControl, Constants {
     } 
 
      function getTradingMode() public view returns (bool mode_){
-         bool mode = false;
          if (tradeFlag == 1 || dividendFlag ==1) {
-             mode = true;
+             return true;
          } else{
-             mode = false;
+             return false;
          }
-         return mode;
      }
 
-    function addHistory(address _updateAddress, bool _tradeMode) private returns(bool status_, bool tradeMode_) {
+    function addHistory(address _updateAddress) private {
         History memory history;
         history.blockNumber = block.number;
         history.lastUpdate = block.timestamp;
         history.updatedBy = _updateAddress;
         paymentHistory.push(history);
-        bool[] memory status = new bool[](tradePercent);
-        for(uint i = 0; i < tradePercent; i++){
-          status[i] = true;
-        }
-        return ((status[0]==true), _tradeMode);
     }
 
    function getPayments(address _user) public view returns (Payment[] memory payments_) {
-      require(_user != address(0) ,"Gas Contract - getPayments function - User must have a valid non zero address");
-       return payments[_user];
-   }
+        require(_user != address(0) ,"Gas Contract - getPayments function - User must have a valid non zero address");
+        return payments[_user];
+    }
 
-      function transfer(address _recipient, uint _amount, string calldata _name) public returns (bool status_) {
-      require(balances[msg.sender] >= _amount,"Gas Contract - Transfer function - Sender has insufficient Balance");
-      require(bytes(_name).length < 9,"Gas Contract - Transfer function -  The recipient name is too long, there is a max length of 8 characters");
-      balances[msg.sender] -= _amount;
-      balances[_recipient] += _amount;
-      emit Transfer(_recipient, _amount);
-      Payment memory payment;
-      payment.admin = address(0);   
-      payment.adminUpdated = false;
-      payment.paymentType = PaymentType.BasicPayment;
-      payment.recipient = _recipient;
-      payment.amount = _amount;
-      payment.recipientName = _name;
-      payment.paymentID = ++paymentCounter;
-      payments[msg.sender].push(payment);
-      bool[] memory status = new bool[](tradePercent);
-      for(uint i = 0; i < tradePercent; i++){
-          status[i] = true;
-      }
-    return (status[0]==true);
-   }
+    function transfer(address _recipient, uint _amount, string calldata _name) public returns (bool status_) {
+        require(balances[msg.sender] >= _amount,"Gas Contract - Transfer function - Sender has insufficient Balance");
+        require(bytes(_name).length < 9,"Gas Contract - Transfer function -  The recipient name is too long, there is a max length of 8 characters");
+        
+        balances[msg.sender] -= _amount;
+        balances[_recipient] += _amount;
+        emit Transfer(_recipient, _amount);
+
+        Payment memory payment;
+        payment.admin = address(0);   
+        payment.adminUpdated = false;
+        payment.paymentType = PaymentType.BasicPayment;
+        payment.recipient = _recipient;
+        payment.amount = _amount;
+        payment.recipientName = _name;
+        payment.paymentID = ++paymentCounter;
+        payments[msg.sender].push(payment);
+        
+        return true;
+    }
 
        function updatePayment(address _user, uint _ID, uint _amount,PaymentType _type ) public onlyRole(ADMIN_ROLE) {
         require(_ID > 0,"Gas Contract - Update Payment function - ID must be greater than 0");
@@ -132,9 +124,9 @@ contract GasContract is AccessControl, Constants {
                payments[_user][ii].admin = _user;
                payments[_user][ii].paymentType = _type;
                payments[_user][ii].amount = _amount;
-               bool tradingMode = getTradingMode();
-               addHistory(_user, tradingMode);
-               emit PaymentUpdated(msg.sender, _ID, _amount,payments[_user][ii].recipientName);
+               addHistory(_user);
+               emit PaymentUpdated(msg.sender, _ID, _amount, payments[_user][ii].recipientName);
+               break;
             }
         }
     }
