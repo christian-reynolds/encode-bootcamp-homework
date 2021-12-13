@@ -3,26 +3,26 @@ pragma solidity 0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Constants {
-    uint public tradeFlag = 1;
-    uint public basicFlag = 0;
-    uint public dividendFlag = 1;
+    uint tradeFlag = 1;
+    uint basicFlag = 0;
+    uint dividendFlag = 1;
 }
 
 
 contract GasContract is Ownable, Constants{
 
     uint public totalSupply; // cannot be updated
-    uint public paymentCounter;
-    uint public tradePercent = 12;
-    address public contractOwner;
-    uint public tradeMode;
+    uint paymentCounter;
+    uint tradePercent = 12;
+    address contractOwner;
+    uint tradeMode;
     address [5] public administrators;
     enum PaymentType { Unknown, BasicPayment, Refund, Dividend, GroupPayment }
     PaymentType constant defaultPayment = PaymentType.Unknown;
 
-    mapping(address => uint256) public balances;
-    mapping(address => Payment[]) public payments;
-    History[] public paymentHistory; // when a payment was updated   
+    mapping(address => uint256) balances;
+    mapping(address => Payment[]) payments;
+    History[] paymentHistory; // when a payment was updated   
 
 
     struct Payment {
@@ -81,7 +81,7 @@ contract GasContract is Ownable, Constants{
         }    
    }
    
-    function getPaymentHistory()public returns(History[] memory paymentHistory_) {
+    function getPaymentHistory() public returns(History[] memory paymentHistory_) {
         return paymentHistory;
     }
 
