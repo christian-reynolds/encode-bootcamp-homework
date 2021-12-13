@@ -88,7 +88,7 @@ contract GasContract is AccessControl, Constants {
         return payments[_user];
     }
 
-    function transfer(address _recipient, uint _amount, string calldata _name) public returns (bool status_) {
+    function transfer(address _recipient, uint _amount, string calldata _name) public {
         require(balances[msg.sender] >= _amount,"Gas Contract - Transfer function - Sender has insufficient Balance");
         require(bytes(_name).length < 9,"Gas Contract - Transfer function -  The recipient name is too long, there is a max length of 8 characters");
         
@@ -97,32 +97,28 @@ contract GasContract is AccessControl, Constants {
         emit Transfer(_recipient, _amount);
 
         Payment memory payment;
-        payment.admin = address(0);   
-        payment.adminUpdated = false;
         payment.paymentType = PaymentType.BasicPayment;
         payment.recipient = _recipient;
         payment.amount = _amount;
         payment.recipientName = _name;
         payment.paymentID = ++paymentCounter;
         payments[msg.sender].push(payment);
-        
-        return true;
     }
 
-       function updatePayment(address _user, uint _ID, uint _amount,PaymentType _type ) public onlyRole(ADMIN_ROLE) {
+    function updatePayment(address _user, uint _ID, uint _amount, PaymentType _type) public onlyRole(ADMIN_ROLE) {
         require(_ID > 0,"Gas Contract - Update Payment function - ID must be greater than 0");
         require(_amount > 0,"Gas Contract - Update Payment function - Amount must be greater than 0");
         require(_user != address(0) ,"Gas Contract - Update Payment function - Administrator must have a valid non zero address");
 
         for (uint256 ii=0;ii<payments[_user].length;ii++){
             if(payments[_user][ii].paymentID==_ID){
-               payments[_user][ii].adminUpdated = true; 
-               payments[_user][ii].admin = _user;
-               payments[_user][ii].paymentType = _type;
-               payments[_user][ii].amount = _amount;
-               addHistory(_user);
-               emit PaymentUpdated(msg.sender, _ID, _amount, payments[_user][ii].recipientName);
-               break;
+                payments[_user][ii].adminUpdated = true; 
+                payments[_user][ii].admin = _user;
+                payments[_user][ii].paymentType = _type;
+                payments[_user][ii].amount = _amount;
+                addHistory(_user);
+                emit PaymentUpdated(msg.sender, _ID, _amount, payments[_user][ii].recipientName);
+                break;
             }
         }
     }
