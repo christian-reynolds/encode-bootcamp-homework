@@ -16,11 +16,8 @@ contract GasContract is AccessControl, Constants {
 
     uint public totalSupply; // cannot be updated
     uint paymentCounter;
-    uint tradePercent = 12;
-    uint tradeMode;
     address[5] public administrators;
     enum PaymentType { Unknown, BasicPayment, Refund, Dividend, GroupPayment }
-    PaymentType constant defaultPayment = PaymentType.Unknown;
 
     mapping(address => uint256) balances;
     mapping(address => Payment[]) payments;
