@@ -4,7 +4,6 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract Constants {
     uint tradeFlag = 1;
-    uint basicFlag = 0;
     uint dividendFlag = 1;
 }
 
