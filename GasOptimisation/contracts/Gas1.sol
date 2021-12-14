@@ -20,18 +20,18 @@ contract GasContract is AccessControl {
 
     struct Payment {
       uint paymentID;
+      uint amount;
       PaymentType paymentType;
       address recipient;
       string recipientName;  // max 8 characters
       bool adminUpdated;
-      address admin;    // administrators address
-      uint amount;
+      address admin;    // administrators address      
     }
 
     struct History {
       uint256 lastUpdate;
-      address updatedBy;
-      uint256 blockNumber;  
+      uint256 blockNumber;
+      address updatedBy;      
     }
 
     event supplyChanged(address indexed, uint256 indexed);
