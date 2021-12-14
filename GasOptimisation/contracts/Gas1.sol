@@ -93,7 +93,7 @@ contract GasContract is AccessControl, Constants {
         }
     }
    
-    function getPaymentHistory() private returns(History[] memory paymentHistory_) {
+    function getPaymentHistory() private view returns(History[] memory paymentHistory_) {
         return paymentHistory;
     }
    
