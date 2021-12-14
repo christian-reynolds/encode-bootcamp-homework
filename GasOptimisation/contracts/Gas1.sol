@@ -15,8 +15,6 @@ contract GasContract is AccessControl {
 
     mapping(address => uint256) balances;
     mapping(address => Payment[]) payments;
-    History[] paymentHistory; // when a payment was updated   
-
 
     struct Payment {
       uint paymentID;
@@ -26,12 +24,6 @@ contract GasContract is AccessControl {
       string recipientName;  // max 8 characters
       bool adminUpdated;
       address admin;    // administrators address      
-    }
-
-    struct History {
-      uint256 lastUpdate;
-      uint256 blockNumber;
-      address updatedBy;      
     }
 
     event supplyChanged(address indexed, uint256 indexed);
@@ -54,8 +46,8 @@ contract GasContract is AccessControl {
    }
 
    function transfer(address _recipient, uint _amount, string calldata _name) external {
-        require(balances[msg.sender] >= _amount,"Gas/Transfer - Insufficient Balance");
-        require(bytes(_name).length < 9,"Gas/Transfer - Name is too long, max of 8");
+        require(balances[msg.sender] >= _amount,"Insufficient Balance");
+        require(bytes(_name).length < 9,"Name is too long, max of 8");
         
         balances[msg.sender] -= _amount;
         balances[_recipient] += _amount;
@@ -71,9 +63,9 @@ contract GasContract is AccessControl {
     }
 
     function updatePayment(address _user, uint _ID, uint _amount, PaymentType _type) external onlyRole(ADMIN_ROLE) {
-        require(_ID > 0,"Gas/Update Payment - ID must be > 0");
-        require(_amount > 0,"Gas/Update Payment - Amount must be > 0");
-        require(_user != address(0) ,"Gas/Update Payment - Must have a valid address");
+        require(_ID > 0,"ID must be > 0");
+        require(_amount > 0,"Amount must be > 0");
+        require(_user != address(0) ,"Must have a valid address");
 
         for (uint256 ii=0;ii<payments[_user].length;ii++){
             if(payments[_user][ii].paymentID==_ID){
@@ -81,15 +73,10 @@ contract GasContract is AccessControl {
                 payments[_user][ii].admin = _user;
                 payments[_user][ii].paymentType = _type;
                 payments[_user][ii].amount = _amount;
-                addHistory(_user);
                 emit PaymentUpdated(msg.sender, _ID, _amount, payments[_user][ii].recipientName);
                 break;
             }
         }
-    }
-   
-    function getPaymentHistory() private view returns(History[] memory paymentHistory_) {
-        return paymentHistory;
     }
    
     function balanceOf(address _user) external view returns (uint balance_){
@@ -97,16 +84,8 @@ contract GasContract is AccessControl {
         return balance; 
     }
 
-    function addHistory(address _updateAddress) private {
-        History memory history;
-        history.blockNumber = block.number;
-        history.lastUpdate = block.timestamp;
-        history.updatedBy = _updateAddress;
-        paymentHistory.push(history);
-    }
-
    function getPayments(address _user) external view returns (Payment[] memory payments_) {
-        require(_user != address(0) ,"Gas/getPayments - Must have a valid address");
+        require(_user != address(0) ,"Must have a valid address");
         return payments[_user];
     }
 
