@@ -54,8 +54,8 @@ contract GasContract is AccessControl {
    }
 
    function transfer(address _recipient, uint _amount, string calldata _name) external {
-        require(balances[msg.sender] >= _amount,"Gas Contract - Transfer function - Sender has insufficient Balance");
-        require(bytes(_name).length < 9,"Gas Contract - Transfer function -  The recipient name is too long, there is a max length of 8 characters");
+        require(balances[msg.sender] >= _amount,"Gas/Transfer - Insufficient Balance");
+        require(bytes(_name).length < 9,"Gas/Transfer - Name is too long, max of 8");
         
         balances[msg.sender] -= _amount;
         balances[_recipient] += _amount;
@@ -71,9 +71,9 @@ contract GasContract is AccessControl {
     }
 
     function updatePayment(address _user, uint _ID, uint _amount, PaymentType _type) external onlyRole(ADMIN_ROLE) {
-        require(_ID > 0,"Gas Contract - Update Payment function - ID must be greater than 0");
-        require(_amount > 0,"Gas Contract - Update Payment function - Amount must be greater than 0");
-        require(_user != address(0) ,"Gas Contract - Update Payment function - Administrator must have a valid non zero address");
+        require(_ID > 0,"Gas/Update Payment - ID must be > 0");
+        require(_amount > 0,"Gas/Update Payment - Amount must be > 0");
+        require(_user != address(0) ,"Gas/Update Payment - Must have a valid address");
 
         for (uint256 ii=0;ii<payments[_user].length;ii++){
             if(payments[_user][ii].paymentID==_ID){
@@ -106,7 +106,7 @@ contract GasContract is AccessControl {
     }
 
    function getPayments(address _user) external view returns (Payment[] memory payments_) {
-        require(_user != address(0) ,"Gas Contract - getPayments function - User must have a valid non zero address");
+        require(_user != address(0) ,"Gas/getPayments - Must have a valid address");
         return payments[_user];
     }
 
