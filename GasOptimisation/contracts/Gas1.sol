@@ -2,13 +2,8 @@
 pragma solidity 0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract Constants {
-    uint tradeFlag = 1;
-    uint dividendFlag = 1;
-}
 
-
-contract GasContract is AccessControl, Constants {
+contract GasContract is AccessControl {
     
     // Create a new role identifier for the minter role
     bytes32 private constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -116,11 +111,7 @@ contract GasContract is AccessControl, Constants {
     }
 
     function getTradingMode() external view returns (bool mode_){
-         if (tradeFlag == 1 || dividendFlag ==1) {
-             return true;
-         } else{
-             return false;
-         }
+         return true;
      }    
 
 }
