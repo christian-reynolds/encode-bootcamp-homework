@@ -57,38 +57,8 @@ contract GasContract is AccessControl, Constants {
         balances[msg.sender] = totalSupply;
         emit supplyChanged(msg.sender, totalSupply);
    }
-   
-    function getPaymentHistory() private returns(History[] memory paymentHistory_) {
-        return paymentHistory;
-    }
-   
-    function balanceOf(address _user) public view returns (uint balance_){
-        uint balance = balances[_user];
-        return balance; 
-    } 
 
-     function getTradingMode() public view returns (bool mode_){
-         if (tradeFlag == 1 || dividendFlag ==1) {
-             return true;
-         } else{
-             return false;
-         }
-     }
-
-    function addHistory(address _updateAddress) private {
-        History memory history;
-        history.blockNumber = block.number;
-        history.lastUpdate = block.timestamp;
-        history.updatedBy = _updateAddress;
-        paymentHistory.push(history);
-    }
-
-   function getPayments(address _user) public view returns (Payment[] memory payments_) {
-        require(_user != address(0) ,"Gas Contract - getPayments function - User must have a valid non zero address");
-        return payments[_user];
-    }
-
-    function transfer(address _recipient, uint _amount, string calldata _name) public {
+   function transfer(address _recipient, uint _amount, string calldata _name) external {
         require(balances[msg.sender] >= _amount,"Gas Contract - Transfer function - Sender has insufficient Balance");
         require(bytes(_name).length < 9,"Gas Contract - Transfer function -  The recipient name is too long, there is a max length of 8 characters");
         
@@ -105,7 +75,7 @@ contract GasContract is AccessControl, Constants {
         payments[msg.sender].push(payment);
     }
 
-    function updatePayment(address _user, uint _ID, uint _amount, PaymentType _type) public onlyRole(ADMIN_ROLE) {
+    function updatePayment(address _user, uint _ID, uint _amount, PaymentType _type) external onlyRole(ADMIN_ROLE) {
         require(_ID > 0,"Gas Contract - Update Payment function - ID must be greater than 0");
         require(_amount > 0,"Gas Contract - Update Payment function - Amount must be greater than 0");
         require(_user != address(0) ,"Gas Contract - Update Payment function - Administrator must have a valid non zero address");
@@ -122,5 +92,35 @@ contract GasContract is AccessControl, Constants {
             }
         }
     }
+   
+    function getPaymentHistory() private returns(History[] memory paymentHistory_) {
+        return paymentHistory;
+    }
+   
+    function balanceOf(address _user) external view returns (uint balance_){
+        uint balance = balances[_user];
+        return balance; 
+    }
+
+    function addHistory(address _updateAddress) private {
+        History memory history;
+        history.blockNumber = block.number;
+        history.lastUpdate = block.timestamp;
+        history.updatedBy = _updateAddress;
+        paymentHistory.push(history);
+    }
+
+   function getPayments(address _user) external view returns (Payment[] memory payments_) {
+        require(_user != address(0) ,"Gas Contract - getPayments function - User must have a valid non zero address");
+        return payments[_user];
+    }
+
+    function getTradingMode() external view returns (bool mode_){
+         if (tradeFlag == 1 || dividendFlag ==1) {
+             return true;
+         } else{
+             return false;
+         }
+     }    
 
 }
