@@ -19,22 +19,50 @@ describe("DeFi", () => {
       "0x503828976D22510aad0201ac7EC88293211D23Da"
     );
     console.log("owner account is ", owner.address);
-
+    
     DAI_TokenContract = await ethers.getContractAt("ERC20", DAIAddress);
     USDC_TokenContract = await ethers.getContractAt("ERC20", USDCAddress);
     const symbol = await DAI_TokenContract.symbol();
     console.log(symbol);
     const DeFi = await ethers.getContractFactory("DeFi");
 
+    console.log("whale account is ", await DAI_TokenContract.balanceOf(whale.address));
+
+    let test = await DAI_TokenContract.balanceOf(owner.address);
+    console.log("owner before ", test.toNumber());
+
     await DAI_TokenContract.connect(whale).transfer(
       owner.address,
       BigInt(INITIAL_AMOUNT)
     );
 
+    console.log("owner balance ", await DAI_TokenContract.balanceOf(owner.address));
+
     DeFi_Instance = await DeFi.deploy();
   });
 
-  it("should check transfer succeeded", async () => {});
-  it("should sendDAI to contract", async () => {});
-  it("should make a swap", async () => {});
+  it("should check transfer succeeded", async () => {
+    let test = await DAI_TokenContract.balanceOf(owner.address);
+
+    expect(test.toNumber()).to.be.greaterThanOrEqual(INITIAL_AMOUNT);
+  });
+
+  it("should sendDAI to contract", async () => {
+    await DAI_TokenContract.transfer(
+      DeFi_Instance.address,
+      BigInt(INITIAL_AMOUNT)
+    );
+
+    let test = await DAI_TokenContract.balanceOf(DeFi_Instance.address);
+
+    expect(test.toNumber()).to.be.greaterThanOrEqual(INITIAL_AMOUNT);
+  });
+
+  it("should make a swap", async () => {
+    let test = await DeFi_Instance.swapDAItoUSDC(INITIAL_AMOUNT);
+
+    let test2 = await USDC_TokenContract.balanceOf(owner.address);
+
+    expect(test2.toNumber()).to.be.greaterThanOrEqual(INITIAL_AMOUNT);
+  });
 });
