@@ -12,7 +12,8 @@ describe("DeFi", () => {
   let DAI_TokenContract;
   let USDC_TokenContract;
   let DeFi_Instance;
-  const INITIAL_AMOUNT = 999999999000000;
+  const INITIAL_AMOUNT = "1000";
+
   before(async function () {
     [owner, addr1, addr2, addr3, addr4, addr5] = await ethers.getSigners();
 
@@ -23,15 +24,18 @@ describe("DeFi", () => {
     );
     console.log("owner account is ", owner.address);
     
+    // Get contract instances of DAI and USDC
     DAI_TokenContract = await ethers.getContractAt("ERC20", DAIAddress);
     USDC_TokenContract = await ethers.getContractAt("ERC20", USDCAddress);
     const symbol = await DAI_TokenContract.symbol();
-    console.log(symbol);
+
+    // Get an instance of our DeFi contract
     const DeFi = await ethers.getContractFactory("DeFi");
 
+    // Transfer DAI from the whale to the owner address
     await DAI_TokenContract.connect(whale).transfer(
       owner.address,
-      BigInt(INITIAL_AMOUNT)
+      ethers.utils.parseUnits(INITIAL_AMOUNT)
     );
 
     DeFi_Instance = await DeFi.deploy();
@@ -41,30 +45,39 @@ describe("DeFi", () => {
   });
 
   it("should check transfer succeeded", async () => {
-    let test = await DAI_TokenContract.balanceOf(owner.address);
+    let ownerDaiBalance = await DAI_TokenContract.balanceOf(owner.address);
+    console.log("Owner DAI Balance: ", ethers.utils.formatUnits(ownerDaiBalance));
 
-    expect(test.toNumber()).to.be.greaterThanOrEqual(INITIAL_AMOUNT);
+    expect(ownerDaiBalance).to.be.gte(ethers.utils.parseUnits(INITIAL_AMOUNT));
   });
 
-  it("should sendDAI to contract", async () => {
+  it("should send DAI to contract", async () => {
+    // Transfer DAI from the Owner address to our DeFi contract address
     await DAI_TokenContract.transfer(
       DeFi_Instance.address,
-      BigInt(INITIAL_AMOUNT)
+      ethers.utils.parseUnits(INITIAL_AMOUNT)
     );
 
-    let test = await DAI_TokenContract.balanceOf(DeFi_Instance.address);
+    let defiDaiBalance = await DAI_TokenContract.balanceOf(DeFi_Instance.address);
+    let ownerDaiBalance = await DAI_TokenContract.balanceOf(owner.address);
 
-    expect(test.toNumber()).to.be.greaterThanOrEqual(INITIAL_AMOUNT);
+    console.log("DeFi Contract DAI Balance", ethers.utils.formatEther(defiDaiBalance));
+    console.log("Owner DAI Balance", ethers.utils.formatEther(ownerDaiBalance));
+
+    expect(defiDaiBalance).to.be.gte(ethers.utils.parseUnits(INITIAL_AMOUNT));
   });
 
   it("should make a swap", async () => {
-    let tx = await DeFi_Instance.swapDAItoUSDC(100);
+    // DeFi Contract swaps the DAI to USDC and sends it back to the Owner address
+    let tx = await DeFi_Instance.swapDAItoUSDC(ethers.utils.parseUnits(INITIAL_AMOUNT));
     await tx.wait();
+
+    let defiDaiBalance = await DAI_TokenContract.balanceOf(DeFi_Instance.address);
+    console.log("DeFi Contract DAI Balance", ethers.utils.formatEther(defiDaiBalance));
     
-    let usdcBalance = await USDC_TokenContract.balanceOf(DeFi_Instance.address);
+    let usdcBalance = await USDC_TokenContract.balanceOf(owner.address);
+    console.log("Owner USDC balance: ", ethers.utils.formatUnits(usdcBalance, 6));
 
-    console.log("USDC balance: ", usdcBalance);
-
-    // expect(test2.toNumber()).to.be.greaterThanOrEqual(INITIAL_AMOUNT);
+    expect(usdcBalance).to.be.gt(ethers.utils.parseUnits("1", 6));
   });
 });
