@@ -56,6 +56,7 @@ describe("DeFi", () => {
 
     expect(balance).to.eql(ethers.utils.parseUnits(INITIAL_AMOUNT));
   });
+
   it("should make a swap", async () => {
     await DeFi_Instance.addToCompound(ethers.utils.parseUnits(INITIAL_AMOUNT));
 
@@ -63,5 +64,13 @@ describe("DeFi", () => {
     console.log("DeFi cDAI balance: ", ethers.utils.formatUnits(balance, 8));
 
     expect(balance).to.gt(ethers.utils.parseUnits("0"));
+  });
+
+  it("ETH USD price should be greater than zero", async () => {
+    const price = await DeFi_Instance.getEthUsdPrice();
+
+    console.log("ETH USD price: ", ethers.utils.formatUnits(price, 8));
+
+    expect(price).to.gt(ethers.utils.parseUnits("0"));
   });
 });
