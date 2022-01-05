@@ -1,5 +1,5 @@
 const { expect, use } = require("chai");
-const { ethers } = require("hardhat");
+const { network, ethers } = require("hardhat");
 
 const { solidity } = require("ethereum-waffle");
 use(solidity);
@@ -16,6 +16,13 @@ describe("DeFi", () => {
 
   before(async function () {
     [owner, addr1, addr2, addr3, addr4, addr5] = await ethers.getSigners();
+
+    // This is needed to impersonate an account on the forked network
+    await network.provider.request({
+      method: "hardhat_impersonateAccount",
+      params: ["0x503828976D22510aad0201ac7EC88293211D23Da"],
+    });
+    
     const whale = await ethers.getSigner(
       "0x503828976D22510aad0201ac7EC88293211D23Da"
     );
