@@ -12,23 +12,26 @@ describe("DeFi", () => {
   let DAI_TokenContract;
   let USDC_TokenContract;
   let DeFi_Instance;
-  const INITIAL_AMOUNT = 999999999000000;
+  const INITIAL_AMOUNT = "1000";
+
   before(async function () {
     [owner, addr1, addr2, addr3, addr4, addr5] = await ethers.getSigners();
     const whale = await ethers.getSigner(
       "0x503828976D22510aad0201ac7EC88293211D23Da"
     );
+    console.log("whale account is ", whale.address);
     console.log("owner account is ", owner.address);
 
     DAI_TokenContract = await ethers.getContractAt("ERC20", DAIAddress);
     USDC_TokenContract = await ethers.getContractAt("ERC20", USDCAddress);
     const symbol = await DAI_TokenContract.symbol();
-    console.log(symbol);
+    console.log(DAI_TokenContract.address);
     const DeFi = await ethers.getContractFactory("DeFi");
 
+    // Transfer DAI from the whale to the owner address
     await DAI_TokenContract.connect(whale).transfer(
       owner.address,
-      BigInt(INITIAL_AMOUNT)
+      ethers.utils.parseUnits(INITIAL_AMOUNT)
     );
 
     DeFi_Instance = await DeFi.deploy();
