@@ -19,17 +19,17 @@ interface CErc20 {
 
 contract DeFi {
     address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    address public constant cDAI = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
+    address public constant CDAI = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
     Erc20 daiContract;
     CErc20 cDAIContract;
 
     constructor() {
         daiContract = Erc20(DAI);
-        cDAIContract = CErc20(cDAI);
+        cDAIContract = CErc20(CDAI);
     }
 
     function addToCompound(uint256 amount) public {
-        daiContract.approve(cDAI, amount);
+        daiContract.approve(CDAI, amount);
         cDAIContract.mint(amount);
     }
 }
